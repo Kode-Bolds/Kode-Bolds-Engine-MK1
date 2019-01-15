@@ -81,6 +81,7 @@ namespace Game_Engine.Objects
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Disable(EnableCap.Texture2D);
+            GL.Disable(EnableCap.Blend);
 
             GFX.Clear(clearColourIn);
         }
