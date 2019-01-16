@@ -100,11 +100,7 @@ namespace OpenGL_Game.Scenes
 
 
             //Sets light position
-<<<<<<< HEAD
             lightPosition = new Vector4(0f, 20f, 0f, 1);
-=======
-            lightPosition = new Vector4(0f, 8f, 0f, 1);
->>>>>>> upstream/master
 
             //Creates initial Entities
             CreateEntities();
@@ -390,11 +386,7 @@ namespace OpenGL_Game.Scenes
             newEntity.AddComponent(new ComponentTransform(new Vector3(-70f, -40, 30f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Triangulated_Char.obj"));
             newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
-<<<<<<< HEAD
             newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
-=======
-            newEntity.AddComponent(new ComponentTexture("Textures/Skin.png"));
->>>>>>> upstream/master
             entityManager.AddEntity(newEntity);
 
             //Create a house
@@ -402,7 +394,6 @@ namespace OpenGL_Game.Scenes
             newEntity.AddComponent(new ComponentTransform(new Vector3(25f, 10, 25f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Triangulated_Sniper.obj"));
             newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
-<<<<<<< HEAD
             newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
             entityManager.AddEntity(newEntity);
 
@@ -411,8 +402,6 @@ namespace OpenGL_Game.Scenes
             newEntity.AddComponent(new ComponentTransform(new Vector3(0f, 20, 0f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)));
             newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
             newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
-=======
->>>>>>> upstream/master
             newEntity.AddComponent(new ComponentTexture("Textures/Green.png"));
             entityManager.AddEntity(newEntity);
         }
@@ -443,12 +432,9 @@ namespace OpenGL_Game.Scenes
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-<<<<<<< HEAD
-=======
             //Calls Render Systems every frame
             systemManager.RenderSystems();
 
->>>>>>> upstream/master
             GL.Viewport(0, sceneManager.Height - (sceneManager.Height / 5), sceneManager.Width / 5, sceneManager.Height / 5);
 
             GL.MatrixMode(MatrixMode.Projection);
@@ -476,12 +462,6 @@ namespace OpenGL_Game.Scenes
                 GUI.DrawText(new Rectangle(0, (int)(fontSize / 2f + 800), (int)width, (int)(fontSize * 2f)), "Paused", (int)(fontSize * 1.5f), StringAlignment.Center, Color.White);
             }
             GUI.Render(Color.Transparent);
-<<<<<<< HEAD
-
-            //Calls Render Systems every frame
-            systemManager.RenderSystems();
-=======
->>>>>>> upstream/master
         }
 
         public void Update(FrameEventArgs e)
