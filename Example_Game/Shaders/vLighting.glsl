@@ -21,7 +21,7 @@ void main()
 	surfacePosition = vec4(a_Position, 1) * uModel;
 
 	lightDir = normalize(lightPosition.xyz - surfacePosition.xyz); 
-	viewDir = normalize(surfacePosition.xyz - eyePosition.xyz);
+	viewDir = normalize(eyePosition.xyz - surfacePosition.xyz);
 	normal = normalize(a_Normal);
 
 	gl_Position = surfacePosition * uView * uProj;

@@ -22,10 +22,15 @@ void main()
     vec3 reflection = normalize(reflect(lightDir, normal));
 
 	vec4 texColour = texture2D( s_texture, texCoord );
+	vec4 lightColour = vec4(0.9, 0.9, 0.9, 1);
    
-	vec4 ambient = ambientFactor;
-	vec4 diffuse = diffuseFactor * max(dot(normal, lightDir), 0.0);
-	vec4 specular = specularFactor * pow(max(0.0, dot(reflection, viewDir)), specularPower);
+	vec4 ambient = vec4(0.3, 0.3, 0.3, 1.0);
+	float diffuse = max(dot(normal, lightDir), 0.0);
+	vec4 diffuseColour = lightColour * diffuse;
+	float specular = pow(max(0.0, dot(viewDir, reflection)), specularPower);
+	vec4 specularColour = lightColour * specular;
+
+	vec4 finalColour = clamp((ambient + (diffuseColour * diffuseFactor) + (specularColour * specularFactor)), 0.0, 1.0);
    
-	FragColour = (ambient + diffuse + specular) * texColour;  
+	FragColour = clamp(finalColour * texColour, 0.0, 1.0);  
 }

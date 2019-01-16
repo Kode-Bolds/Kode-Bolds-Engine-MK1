@@ -184,6 +184,7 @@ namespace Game_Engine.Systems
 
             GL.Viewport(clientRectangle);
 
+
             geometry.Render();
 
             GL.BindVertexArray(0);
@@ -226,11 +227,11 @@ namespace Game_Engine.Systems
             GL.Uniform4(uniform_veyePosition, eyePos);
             Vector4 lightPos = lightPosition; // get light position
             GL.Uniform4(uniform_vlightPosition, lightPos);
-            Vector4 ambientCol = new Vector4(0.2f); // ambient colour
+            Vector4 ambientCol = new Vector4(0.2f, 0.2f, 0.2f, 1); // ambient colour
             GL.Uniform4(uniform_vambient, ambientCol);
-            Vector4 diffuseColour = new Vector4(0.8f); // diffuse colour
+            Vector4 diffuseColour = new Vector4(0.8f, 0.8f, 0.8f, 1); // diffuse colour
             GL.Uniform4(uniform_vdiffuse, diffuseColour);
-            Vector4 specularColour = new Vector4(0.9f); // specular colour
+            Vector4 specularColour = new Vector4(0.9f, 0.9f, 0.9f, 1); // specular colour
             GL.Uniform4(uniform_vspecular, specularColour);
             GL.Uniform1(uniform_fspecularPower, 2f); // specular power
             float timer = Managers.SceneManager.time;
