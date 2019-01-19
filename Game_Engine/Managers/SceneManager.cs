@@ -25,8 +25,8 @@ namespace Game_Engine.Managers
         public static float time;
 
         public SceneManager() : base(
-            1920,
-            1080,
+            1280,
+            720,
             GraphicsMode.Default,
             "DOOMED",
             GameWindowFlags.FixedWindow,
@@ -36,7 +36,7 @@ namespace Game_Engine.Managers
             GraphicsContextFlags.ForwardCompatible
             )
         {
-            audioContext = new AudioContext();
+            audioContext = new AudioContext();           
         }
 
         protected override void OnLoad(EventArgs e)
@@ -44,8 +44,6 @@ namespace Game_Engine.Managers
             base.OnLoad(e);
 
             //Sets window width and height
-            Width = 1920;
-            Height = 1080;
             windowWidth = Width;
             windowHeight = Height;
 

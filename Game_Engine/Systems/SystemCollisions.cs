@@ -357,9 +357,6 @@ namespace Game_Engine.Systems
                 collided = true;
                 return true;
             }
-
-
-
             return collided;
         }
     }
