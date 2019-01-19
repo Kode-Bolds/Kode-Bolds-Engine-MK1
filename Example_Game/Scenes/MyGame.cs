@@ -205,11 +205,8 @@ namespace OpenGL_Game.Scenes
             newEntity = new Entity("Floor");
             newEntity.AddComponent(new ComponentTransform(new Vector3(12f, -0.5f, 12f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(12.5f, 0.01f, 12.5f)));
             newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
-<<<<<<< HEAD
             newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
-=======
-            newEntity.AddComponent(new ComponentTexture("Textures/Black.png"));
->>>>>>> upstream/master
+
             newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
             entityManager.AddEntity(newEntity);
 
@@ -245,11 +242,8 @@ namespace OpenGL_Game.Scenes
                         newEntity = new Entity("Wall(" + wallCount + ")");
                         newEntity.AddComponent(new ComponentTransform(new Vector3(i, 0.75f, j), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.5f, 1.25f, 0.5f)));
                         newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
-<<<<<<< HEAD
                         newEntity.AddComponent(new ComponentTexture("Textures/Red.png"));
-=======
-                        newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
->>>>>>> upstream/master
+
                         newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
                         newEntity.AddComponent(new ComponentBoxCollider(new Vector2(i - 0.5f, j - 0.5f), new Vector2(i + 0.5f, j - 0.5f), new Vector2(i + 0.5f, j + 0.5f), new Vector2(i - 0.5f, j + 0.5f), new List<string>()));
                         entityManager.AddEntity(newEntity);
@@ -274,11 +268,8 @@ namespace OpenGL_Game.Scenes
                                 newEntity = new Entity("Drone(" + droneCount + ")");
                                 newEntity.AddComponent(new ComponentTransform(map[i, j].Location, new Vector3(0.0f, 1.5708f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f)));
                                 newEntity.AddComponent(new ComponentGeometry("Geometry/cone.obj"));
-<<<<<<< HEAD
                                 newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
-=======
-                                newEntity.AddComponent(new ComponentTexture("Textures/Red.png"));
->>>>>>> upstream/master
+
                                 //newEntity.AddComponent(new ComponentAudio("Audio/ENEMY DEATH SOUND.wav", false, false));
                                 newEntity.AddComponent(new ComponentVelocity(1.5f));
                                 newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
@@ -332,11 +323,8 @@ namespace OpenGL_Game.Scenes
                                 newEntity = new Entity("Damage(" + damagePowerUpCount + ")");
                                 newEntity.AddComponent(new ComponentTransform(map[i, j].Location, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.1f, 0.1f, 0.1f)));
                                 newEntity.AddComponent(new ComponentGeometry("Geometry/cylinder.obj"));
-<<<<<<< HEAD
-                                newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
-=======
                                 newEntity.AddComponent(new ComponentTexture("Textures/Red.png"));
->>>>>>> upstream/master
+
                                 //newEntity.AddComponent(new ComponentAudio("Audio/buzz.wav", true, true));
                                 newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
                                 newEntity.AddComponent(new ComponentSphereCollider((0.075f), powerUpIgnoreCollisionWith));
@@ -421,7 +409,9 @@ namespace OpenGL_Game.Scenes
             systemManager.AddUpdateSystem(newSystem);
             newSystem = new SystemCollisions();
             systemManager.AddUpdateSystem(newSystem);
-            newSystem = new SystemPhysics(sceneManager);
+            newSystem = new SystemAIMovement(sceneManager);
+            systemManager.AddUpdateSystem(newSystem);
+            newSystem = new SystemMovement(sceneManager);
             systemManager.AddUpdateSystem(newSystem);
 
             //Assigns entities to appropriate systems
@@ -434,12 +424,6 @@ namespace OpenGL_Game.Scenes
 
             //Calls Render Systems every frame
             systemManager.RenderSystems();
-
-            GL.Viewport(0, sceneManager.Height - (sceneManager.Height / 5), sceneManager.Width / 5, sceneManager.Height / 5);
-
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-            GL.Ortho(0, sceneManager.Width, 0, sceneManager.Height, -1, 1);
 
             float width = sceneManager.Width, height = sceneManager.Height, fontSize = Math.Min(width, height) / 10f;
             GUI.DrawText(new Rectangle(0, (int)(fontSize / 2f), (int)width, (int)(fontSize * 2f)), "Health: " + health + "/" + healthMax, (int)(fontSize * 1.5f), StringAlignment.Center, Color.White);
