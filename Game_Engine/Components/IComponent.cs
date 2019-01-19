@@ -17,7 +17,8 @@ namespace Game_Engine.Components
         COMPONENT_AI = 1 << 6,
         COMPONENT_BOX_COLLIDER = 1 << 7,
         COMPONENT_SPHERE_COLLIDER = 1 << 8,
-        COMPONENT_HEALTH = 1 << 9
+        COMPONENT_HEALTH = 1 << 9,
+        COMPONENT_LIGHT = 1 << 10
     }
 
     public interface IComponent

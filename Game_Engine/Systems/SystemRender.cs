@@ -23,8 +23,10 @@ namespace Game_Engine.Systems
         protected int uniform_mModel;
         protected int uniform_mView;
         protected int uniform_mProj;
-        protected int uniform_vlightPosition;
-        protected int uniform_veyePosition;
+        protected int uniform_flightPosition;
+        protected int uniform_flightColour;
+        protected int uniform_flightCount;
+        protected int uniform_feyePosition;
         protected int uniform_vambient;
         protected int uniform_vdiffuse;
         protected int uniform_vspecular;
@@ -33,17 +35,16 @@ namespace Game_Engine.Systems
         protected int uniform_ftime;
 
         List<Entity> entityList;
+        List<Entity> lightList;
         List<Camera> cameraList;
-
-        Vector4 lightPosition;
 
         Rectangle clientRectangle;
 
         public SystemRender(List<Camera> inCameraList, Vector4 inLightPosition, Rectangle clientRectangleIn)
         {
             entityList = new List<Entity>();
+            lightList = new List<Entity>();
             cameraList = inCameraList;
-            lightPosition = inLightPosition;
             clientRectangle = clientRectangleIn;
         }
 
@@ -58,11 +59,20 @@ namespace Game_Engine.Systems
             {
                 entityList.Add(entity);
             }
+
+            if ((entity.Mask & ComponentTypes.COMPONENT_LIGHT) == ComponentTypes.COMPONENT_LIGHT)
+            {
+                lightList.Add(entity);
+            }
         }
 
         public void DestroyEntity(Entity entity)
         {
             entityList.Remove(entity);
+            if ((entity.Mask & ComponentTypes.COMPONENT_LIGHT) == ComponentTypes.COMPONENT_LIGHT)
+            {
+                lightList.Remove(entity);
+            }
         }
 
         public void OnAction()
@@ -137,12 +147,13 @@ namespace Game_Engine.Systems
             attribute_vtex = GL.GetAttribLocation(pgmID, "a_TexCoord");
             attribute_vnorm = GL.GetAttribLocation(pgmID, "a_Normal");
 
-            uniform_veyePosition = GL.GetUniformLocation(pgmID, "eyePosition");
+            uniform_feyePosition = GL.GetUniformLocation(pgmID, "eyePosition");
             uniform_mModel = GL.GetUniformLocation(pgmID, "uModel");
             uniform_mView = GL.GetUniformLocation(pgmID, "uView");
             uniform_mProj = GL.GetUniformLocation(pgmID, "uProj");
-            uniform_vlightPosition = GL.GetUniformLocation(pgmID, "lightPosition");
-
+            uniform_flightPosition = GL.GetUniformLocation(pgmID, "lightPositions");
+            uniform_flightColour = GL.GetUniformLocation(pgmID, "lightColours");
+            uniform_flightCount = GL.GetUniformLocation(pgmID, "numberOfLights");
             uniform_stex = GL.GetUniformLocation(pgmID, "s_texture");
             uniform_vambient = GL.GetUniformLocation(pgmID, "ambientFactor");
             uniform_vdiffuse = GL.GetUniformLocation(pgmID, "diffuseFactor");
@@ -151,7 +162,7 @@ namespace Game_Engine.Systems
 
             uniform_ftime = GL.GetUniformLocation(pgmID, "time");
 
-            //if (attribute_vpos == -1 || attribute_vtex == -1 || uniform_stex == -1 || uniform_mModel == -1 || uniform_mView == -1 || uniform_mProj == -1 || uniform_veyePosition == -1)
+            //if (attribute_vpos == -1 || attribute_vtex == -1 || uniform_stex == -1 || uniform_mModel == -1 || uniform_mView == -1 || uniform_mProj == -1 || uniform_feyePosition == -1)
             //{
             //    Console.WriteLine("Error binding attributes");
             //}
@@ -223,15 +234,46 @@ namespace Game_Engine.Systems
 
             GL.Viewport(clientRectangle);
 
-            Vector4 eyePos = new Vector4(cameraList[0].Position); // get camera position
-            GL.Uniform4(uniform_veyePosition, eyePos);
-            Vector4 lightPos = lightPosition; // get light position
-            GL.Uniform4(uniform_vlightPosition, lightPos);
-            Vector4 ambientCol = new Vector4(0.2f, 0.2f, 0.2f, 1); // ambient colour
+            Vector4 eyePos = new Vector4(cameraList[0].Position,1); // get camera position
+            GL.Uniform4(uniform_feyePosition, eyePos);
+
+           // Vector4 lightPos = lightPosition; // get light position
+            //GL.Uniform4(uniform_flightPosition, lightPos);
+            float[,] lightPos = new float[lightList.Count,4];
+            float[,] lightCol = new float[lightList.Count,4];
+
+            for (int i = 0; i < lightList.Count; ++i)
+            {
+                IComponent lightComponent = lightList[i].Components.Find(delegate (IComponent component)
+                {
+                    return component.ComponentType == ComponentTypes.COMPONENT_LIGHT;
+                });
+                IComponent transformComponent = lightList[i].Components.Find(delegate (IComponent component)
+                {
+                    return component.ComponentType == ComponentTypes.COMPONENT_TRANSFORM;
+                });
+                lightPos[i,0] = ((ComponentTransform)transformComponent).Translation.X;
+                lightPos[i,1] = ((ComponentTransform)transformComponent).Translation.Y;
+                lightPos[i,2] = ((ComponentTransform)transformComponent).Translation.Z;
+                lightPos[i, 3] = 1;
+                lightCol[i, 0] = ((ComponentLight)lightComponent).Colour.X;
+                lightCol[i, 1] = ((ComponentLight)lightComponent).Colour.Y;
+                lightCol[i, 2] = ((ComponentLight)lightComponent).Colour.Z;
+                lightCol[i, 3] = 1;
+
+            }
+            GL.Uniform1(uniform_flightCount, lightPos.GetLength(0));
+            if (lightPos.GetLength(0) > 0)
+            {
+                GL.Uniform4(uniform_flightPosition, lightPos.GetLength(0)*4, ref lightPos[0, 0]);
+                GL.Uniform4(uniform_flightColour, lightCol.GetLength(0)*4, ref lightCol[0,0]);
+            }
+
+            Vector4 ambientCol = new Vector4(1f, 1f, 1f, 1); // ambient colour
             GL.Uniform4(uniform_vambient, ambientCol);
-            Vector4 diffuseColour = new Vector4(0.8f, 0.8f, 0.8f, 1); // diffuse colour
+            Vector4 diffuseColour = new Vector4(1f, 1f, 1f, 1); // diffuse colour
             GL.Uniform4(uniform_vdiffuse, diffuseColour);
-            Vector4 specularColour = new Vector4(0.9f, 0.9f, 0.9f, 1); // specular colour
+            Vector4 specularColour = new Vector4(1f, 1, 1, 1); // specular colour
             GL.Uniform4(uniform_vspecular, specularColour);
             GL.Uniform1(uniform_fspecularPower, 2f); // specular power
             float timer = Managers.SceneManager.time;
@@ -250,10 +292,9 @@ namespace Game_Engine.Systems
             GL.UniformMatrix4(uniform_mProj, true, ref proj);
 
             eyePos = new Vector4(cameraList[1].Position); // get camera position
-            GL.Uniform4(uniform_veyePosition, eyePos);
-            lightPos = new Vector4(0, 10, 0, 1); // get light position
-            GL.Uniform4(uniform_vlightPosition, lightPos);
+            GL.Uniform4(uniform_feyePosition, eyePos);
 
+            //lightpos
             geometry.Render();
 
             GL.BindVertexArray(0);
