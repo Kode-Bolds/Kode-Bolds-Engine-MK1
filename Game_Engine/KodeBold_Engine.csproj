@@ -34,7 +34,6 @@
   <ItemGroup>
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,6 +50,7 @@
     <Compile Include="Components\ComponentBoxCollider.cs" />
     <Compile Include="Components\ComponentGeometry.cs" />
     <Compile Include="Components\ComponentHealth.cs" />
+    <Compile Include="Components\ComponentLight.cs" />
     <Compile Include="Components\ComponentShader.cs" />
     <Compile Include="Components\ComponentSphereCollider.cs" />
     <Compile Include="Components\ComponentTexture.cs" />
@@ -88,6 +88,9 @@
     <Compile Include="Systems\SystemCollisions.cs" />
     <Compile Include="Systems\SystemPhysics.cs" />
     <Compile Include="Systems\SystemRender.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />

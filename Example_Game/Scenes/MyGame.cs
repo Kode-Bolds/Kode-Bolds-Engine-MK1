@@ -69,6 +69,8 @@ namespace OpenGL_Game.Scenes
         List<string> powerUpIgnoreCollisionWith;
 
         Entity player;
+        Entity light;
+        Entity test;
 
         public MyGame(SceneManager sceneManager) : base(sceneManager)
         {
@@ -108,6 +110,8 @@ namespace OpenGL_Game.Scenes
 
             //Sets reference to player entity
             player = entityManager.FindEntity("Player");
+            light = entityManager.FindEntity("Light");
+            test = entityManager.FindEntity("test");
 
             //Creates Systems
             CreateSystems();
@@ -159,6 +163,28 @@ namespace OpenGL_Game.Scenes
             }
         }
 
+        private void CreateSystems()
+        {
+            ISystem newSystem;
+
+            //Render Systems
+            newSystem = new SystemRender(cameraList, lightPosition, sceneManager.ClientRectangle);
+            systemManager.AddRenderSystem(newSystem);
+
+            //Update Systems
+            newSystem = new SystemAudio(mainCamera);
+            systemManager.AddUpdateSystem(newSystem);
+            newSystem = new SystemAI(map, Maze.rows, Maze.columns, player);
+            systemManager.AddUpdateSystem(newSystem);
+            newSystem = new SystemCollisions();
+            systemManager.AddUpdateSystem(newSystem);
+            newSystem = new SystemPhysics(sceneManager);
+            systemManager.AddUpdateSystem(newSystem);
+
+            //Assigns entities to appropriate systems
+            systemManager.AssignEntities(entityManager);
+        }
+
         private void CreateEntities()
         {
             Entity newEntity;
@@ -205,11 +231,7 @@ namespace OpenGL_Game.Scenes
             newEntity = new Entity("Floor");
             newEntity.AddComponent(new ComponentTransform(new Vector3(12f, -0.5f, 12f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(12.5f, 0.01f, 12.5f)));
             newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
-<<<<<<< HEAD
             newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
-=======
-            newEntity.AddComponent(new ComponentTexture("Textures/Black.png"));
->>>>>>> upstream/master
             newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
             entityManager.AddEntity(newEntity);
 
@@ -245,11 +267,7 @@ namespace OpenGL_Game.Scenes
                         newEntity = new Entity("Wall(" + wallCount + ")");
                         newEntity.AddComponent(new ComponentTransform(new Vector3(i, 0.75f, j), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.5f, 1.25f, 0.5f)));
                         newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
-<<<<<<< HEAD
-                        newEntity.AddComponent(new ComponentTexture("Textures/Red.png"));
-=======
                         newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
->>>>>>> upstream/master
                         newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
                         newEntity.AddComponent(new ComponentBoxCollider(new Vector2(i - 0.5f, j - 0.5f), new Vector2(i + 0.5f, j - 0.5f), new Vector2(i + 0.5f, j + 0.5f), new Vector2(i - 0.5f, j + 0.5f), new List<string>()));
                         entityManager.AddEntity(newEntity);
@@ -274,11 +292,8 @@ namespace OpenGL_Game.Scenes
                                 newEntity = new Entity("Drone(" + droneCount + ")");
                                 newEntity.AddComponent(new ComponentTransform(map[i, j].Location, new Vector3(0.0f, 1.5708f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f)));
                                 newEntity.AddComponent(new ComponentGeometry("Geometry/cone.obj"));
-<<<<<<< HEAD
                                 newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
-=======
-                                newEntity.AddComponent(new ComponentTexture("Textures/Red.png"));
->>>>>>> upstream/master
+
                                 //newEntity.AddComponent(new ComponentAudio("Audio/ENEMY DEATH SOUND.wav", false, false));
                                 newEntity.AddComponent(new ComponentVelocity(1.5f));
                                 newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
@@ -332,11 +347,7 @@ namespace OpenGL_Game.Scenes
                                 newEntity = new Entity("Damage(" + damagePowerUpCount + ")");
                                 newEntity.AddComponent(new ComponentTransform(map[i, j].Location, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.1f, 0.1f, 0.1f)));
                                 newEntity.AddComponent(new ComponentGeometry("Geometry/cylinder.obj"));
-<<<<<<< HEAD
                                 newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
-=======
-                                newEntity.AddComponent(new ComponentTexture("Textures/Red.png"));
->>>>>>> upstream/master
                                 //newEntity.AddComponent(new ComponentAudio("Audio/buzz.wav", true, true));
                                 newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
                                 newEntity.AddComponent(new ComponentSphereCollider((0.075f), powerUpIgnoreCollisionWith));
@@ -399,33 +410,32 @@ namespace OpenGL_Game.Scenes
 
             //Light entity
             newEntity = new Entity("Light");
-            newEntity.AddComponent(new ComponentTransform(new Vector3(0f, 20, 0f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)));
+            newEntity.AddComponent(new ComponentTransform(new Vector3(0, 5, 0), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)));
+            newEntity.AddComponent(new ComponentVelocity(1f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
             newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
             newEntity.AddComponent(new ComponentTexture("Textures/Green.png"));
+            newEntity.AddComponent(new ComponentLight(new Vector4(0.2f, 0.8f, 0.2f, 1)));
             entityManager.AddEntity(newEntity);
-        }
 
-        private void CreateSystems()
-        {
-            ISystem newSystem;
+            //Light entity
+            newEntity = new Entity("Light2");
+            newEntity.AddComponent(new ComponentTransform(new Vector3(25, 5, 25), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)));
+            newEntity.AddComponent(new ComponentVelocity(1f));
+            newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
+            newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
+            newEntity.AddComponent(new ComponentTexture("Textures/Red.png"));
+            newEntity.AddComponent(new ComponentLight(new Vector4(0.8f, 0.2f, 0.2f, 1)));
+            entityManager.AddEntity(newEntity);
 
-            //Render Systems
-            newSystem = new SystemRender(cameraList, lightPosition, sceneManager.ClientRectangle);
-            systemManager.AddRenderSystem(newSystem);
-
-            //Update Systems
-            newSystem = new SystemAudio(mainCamera);
-            systemManager.AddUpdateSystem(newSystem);
-            newSystem = new SystemAI(map, Maze.rows, Maze.columns, player);
-            systemManager.AddUpdateSystem(newSystem);
-            newSystem = new SystemCollisions();
-            systemManager.AddUpdateSystem(newSystem);
-            newSystem = new SystemPhysics(sceneManager);
-            systemManager.AddUpdateSystem(newSystem);
-
-            //Assigns entities to appropriate systems
-            systemManager.AssignEntities(entityManager);
+            //Light entity
+            newEntity = new Entity("test");
+            newEntity.AddComponent(new ComponentTransform(new Vector3(0, 5, 0), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.3f, 0.3f, 0.3f)));
+            newEntity.AddComponent(new ComponentVelocity(1f));
+            newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
+            newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
+            newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
+            entityManager.AddEntity(newEntity);
         }
 
         public void Render(FrameEventArgs e)
@@ -471,7 +481,6 @@ namespace OpenGL_Game.Scenes
             sceneManager.dt = dt;
             time += (float)e.Time;
             SceneManager.time = time;
-
             //Pause button toggle timer
             pauseToggleTimer += dt;
 
@@ -493,6 +502,10 @@ namespace OpenGL_Game.Scenes
             //Checks game isn't paused
             if(paused != true)
             {
+                light.GetTransform().Translation -= light.GetTransform().Forward * dt;
+                test.GetTransform().Translation -= test.GetTransform().Forward * test.GetVelocity().Velocity * dt;
+                test.GetTransform().Translation += test.GetTransform().Right * test.GetVelocity().Velocity * dt;
+                test.GetTransform().Rotation += new Vector3(0,0.1f*dt,0);
                 //Button toggle on/off timers
                 noClipToggleTimer += dt;
                 disableCollisionToggleTimer += dt;

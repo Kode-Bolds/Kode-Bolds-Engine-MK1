@@ -10,18 +10,11 @@ namespace Game_Engine.Components
 {
     public class ComponentLight : IComponent
     {
-        Vector4 position;
         Vector4 colour;
 
-        public ComponentLight(Vector4 lightPosition, Vector4 lightColour)
+        public ComponentLight(Vector4 lightColour)
         {
-            position = lightPosition;
             colour = lightColour;
-        }
-
-        public Vector4 Position
-        {
-            get { return position; }
         }
 
         public Vector4 Colour
