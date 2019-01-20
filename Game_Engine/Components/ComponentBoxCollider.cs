@@ -8,10 +8,9 @@ namespace Game_Engine.Components
 {
     public class ComponentBoxCollider : IComponent
     {
-        private Vector2 topLeft;
-        private Vector2 topRight;
-        private Vector2 bottomRight;
-        private Vector2 bottomLeft;
+        private float width;
+        private float height;
+        private float depth;
 
         private bool collided;
         private bool disabled;
@@ -20,36 +19,33 @@ namespace Game_Engine.Components
 
         private List<string> collidedWith;
 
-        public ComponentBoxCollider(Vector2 topLeftIn, Vector2 topRightIn, Vector2 bottomRightIn, Vector2 bottomLeftIn, List<string> ignoreCollisionsWithIn)
+        public ComponentBoxCollider(float widthIn, float heightIn, float depthIn, List<string> ignoreCollisionsWithIn)
         {
-            topLeft = topLeftIn;
-            topRight = topRightIn;
-            bottomRight = bottomRightIn;
-            bottomLeft = bottomLeftIn;
+            width = widthIn;
+            height = heightIn;
+            depth = depthIn;
             ignoreCollisionsWith = ignoreCollisionsWithIn;
             collided = false;
             disabled = false;
             collidedWith = new List<string>();
         }
 
-        public Vector2 TopLeft
+        public float Width
         {
-            get { return topLeft; }
+            get { return width; }
+            set { width = value; }
         }
 
-        public Vector2 TopRight
+        public float Height
         {
-            get { return topRight; }
+            get { return height; }
+            set { height = value; }
         }
 
-        public Vector2 BottomRight
+        public float Depth
         {
-            get { return bottomRight; }
-        }
-
-        public Vector2 BottomLeft
-        {
-            get { return bottomLeft; }
+            get { return depth; }
+            set { depth = value; }
         }
 
         public bool Collided

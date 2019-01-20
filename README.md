@@ -1,9 +1,9 @@
 # Kode-Bolds-Engine-MK1
 
 ## Dean
-Collisions - full 3d aabb and sphere
-
 Modify input manager
+
+Modify camera
 
 ## Tony
 GUI
@@ -12,3 +12,5 @@ GUI
 Enum in shader component for blend states etc
 
 Fix AI FOV
+
+Fix lighting access violation bug
