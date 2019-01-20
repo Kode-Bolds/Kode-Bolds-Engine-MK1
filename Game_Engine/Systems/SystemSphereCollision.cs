@@ -8,7 +8,7 @@ using OpenTK;
 
 namespace Game_Engine.Systems
 {
-    class SystemSphereCollision : ISystem
+    public class SystemSphereCollision : ISystem
     {
         const ComponentTypes SPHEREMASK = (ComponentTypes.COMPONENT_SPHERE_COLLIDER);
         const ComponentTypes BOXMASK = (ComponentTypes.COMPONENT_BOX_COLLIDER);
@@ -44,7 +44,7 @@ namespace Game_Engine.Systems
         /// <param name="entity">The entity to be checked for assignment validity</param>
         public void AssignEntity(Entity entity)
         {
-            if ((entity.Mask & SPHEREMASK) == SPHEREMASK)
+            if ((entity.Mask & SPHEREMASK) == SPHEREMASK || (entity.Mask & BOXMASK) == BOXMASK)
             {
                 collidableEntities.Add(entity);
 
@@ -119,7 +119,16 @@ namespace Game_Engine.Systems
                             //Does a Sphere->Box collision check if the collidable entity has a box collider
                             if ((collidedEntity.Mask & BOXMASK) == BOXMASK && ignoreEntity != true)
                             {
+                                bool collided = SphereBoxCollisionCheck(entity, collidedEntity, sphereCollider);
 
+                                //If entity has collided with this collidable entity, sets the entities position to its old position and adds the collidable entity to the collidedWith list
+                                if (collided == true)
+                                {
+                                    oldPositions.TryGetValue(entity.Name, out oldPosition);
+                                    entity.GetTransform().Translation = oldPosition;
+                                    sphereCollider.CollidedWith.Add(collidedEntity.Name);
+                                    collidedEntity.GetCollidedWith().Add(entity.Name);
+                                }
                             }
 
                             //Does a Sphere->Sphere collision check if the collidable entity has a sphere collider
@@ -139,6 +148,10 @@ namespace Game_Engine.Systems
                         }
                     }
                 }
+                //Keeps stored old positions up to date every frame
+                oldPosition = entity.GetTransform().Translation;
+                oldPositions.Remove(entity.Name);
+                oldPositions.Add(entity.Name, oldPosition);
             }
         }
 
@@ -179,6 +192,53 @@ namespace Game_Engine.Systems
                 return true;
             }
             return collided;
+        }
+
+        /// <summary>
+        /// Executes a sphere->box collision check between two entities
+        /// </summary>
+        /// <param name="entity">Current entity to check collisions for</param>
+        /// <param name="collidedEntity">Potentially collided with entity</param>
+        /// <param name="sphereCollider">The sphere collider of the current entity</param>
+        /// <returns></returns>
+        private bool SphereBoxCollisionCheck(Entity entity, Entity collidedEntity, ComponentSphereCollider sphereCollider)
+        {
+            //Retrieves box collider for potentially collided entity
+            IComponent collidedEntityCollider = collidedEntity.Components.Find(delegate (IComponent component)
+            {
+                return component.ComponentType == ComponentTypes.COMPONENT_BOX_COLLIDER;
+            });
+            ComponentBoxCollider collidedBoxCollider = ((ComponentBoxCollider)collidedEntityCollider);
+
+            //Radius squared of sphere collider component for entity
+            float radiusSquared = sphereCollider.Radius * sphereCollider.Radius;
+
+            //Position of entity
+            Vector3 position = entity.GetTransform().Translation;
+
+            //Position of collided entity
+            Vector3 collidedEntityPosition = collidedEntity.GetTransform().Translation;
+
+            //Width height and depth of box collider component for potentially collided entity
+            Vector3 boxMax = new Vector3(collidedEntityPosition.X + collidedBoxCollider.Width, collidedEntityPosition.Y + collidedBoxCollider.Height, collidedEntityPosition.Z + collidedBoxCollider.Depth);
+            Vector3 boxMin = new Vector3(collidedEntityPosition.X - collidedBoxCollider.Width, collidedEntityPosition.Y - collidedBoxCollider.Height, collidedEntityPosition.Z - collidedBoxCollider.Depth);
+
+            //Calculates distance between the sphere and the closest point on the bounding box
+            float distance = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                if(position[i] < boxMin[i])
+                {
+                    distance += ((position[i] - boxMin[i]) * (position[i] - boxMin[i]));
+                }
+                else if(position[i] > boxMax[i])
+                {
+                    distance += ((position[i] - boxMax[i]) * (position[i] - boxMax[i]));
+                }
+            }
+
+            //If distance between sphere and point is less than or equal to radius, returns true, else false
+            return distance <= radiusSquared;
         }
     }
 }

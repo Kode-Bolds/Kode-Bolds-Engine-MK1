@@ -176,7 +176,9 @@ namespace OpenGL_Game.Scenes
             systemManager.AddUpdateSystem(newSystem);
             newSystem = new SystemAI(map, Maze.rows, Maze.columns, player);
             systemManager.AddUpdateSystem(newSystem);
-            newSystem = new SystemCollisions();
+            newSystem = new SystemSphereCollision();
+            systemManager.AddUpdateSystem(newSystem);
+            newSystem = new SystemBoxCollision();
             systemManager.AddUpdateSystem(newSystem);
             newSystem = new SystemAIMovement(sceneManager);
             systemManager.AddUpdateSystem(newSystem);
@@ -232,6 +234,7 @@ namespace OpenGL_Game.Scenes
             //floor plane
             newEntity = new Entity("Floor");
             newEntity.AddComponent(new ComponentTransform(new Vector3(12f, -0.5f, 12f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(12.5f, 0.01f, 12.5f)));
+            newEntity.AddComponent(new ComponentBoxCollider(12.5f, 0.15f, 12.5f, new List<string>()));
             newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
             newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
             newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
@@ -271,7 +274,7 @@ namespace OpenGL_Game.Scenes
                         newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
                         newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
                         newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
-                        newEntity.AddComponent(new ComponentBoxCollider(new Vector2(i - 0.5f, j - 0.5f), new Vector2(i + 0.5f, j - 0.5f), new Vector2(i + 0.5f, j + 0.5f), new Vector2(i - 0.5f, j + 0.5f), new List<string>()));
+                        newEntity.AddComponent(new ComponentBoxCollider(0.5f, 1, 0.5f, new List<string>()));
                         entityManager.AddEntity(newEntity);
 
                         //Sets passable value of Node to false
@@ -382,13 +385,13 @@ namespace OpenGL_Game.Scenes
 
             //Creates player entity at beginning of maze
             newEntity = new Entity("Player");
-            newEntity.AddComponent(new ComponentTransform(new Vector3(12.5f, 0, 12.5f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.5f, 0.5f, 0.5f)));
+            newEntity.AddComponent(new ComponentTransform(new Vector3(13f, 0, 13f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.5f, 0.5f, 0.5f)));
             newEntity.AddComponent(new ComponentGeometry("Geometry/cone.obj"));
             newEntity.AddComponent(new ComponentTexture("Textures/Green.png"));
             //newEntity.AddComponent(new ComponentAudio("Audio/IMPACT SOUND.wav", false, false));
             newEntity.AddComponent(new ComponentVelocity(2f));
             newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
-            newEntity.AddComponent(new ComponentSphereCollider((0.2f), playerIgnoreCollisionWith));
+            newEntity.AddComponent(new ComponentSphereCollider((0.1f), playerIgnoreCollisionWith));
             newEntity.AddComponent(new ComponentHealth(3));
             entityManager.AddEntity(newEntity);
 
@@ -428,10 +431,19 @@ namespace OpenGL_Game.Scenes
             newEntity.AddComponent(new ComponentLight(new Vector4(0.8f, 0.2f, 0.2f, 1)));
             entityManager.AddEntity(newEntity);
 
-            //Light entity
+            //test entity
             newEntity = new Entity("test");
             newEntity.AddComponent(new ComponentTransform(new Vector3(0, 5, 0), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.3f, 0.3f, 0.3f)));
             newEntity.AddComponent(new ComponentVelocity(1f));
+            newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
+            newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
+            newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
+            entityManager.AddEntity(newEntity);
+
+            //test entity
+            newEntity = new Entity("test2");
+            newEntity.AddComponent(new ComponentTransform(new Vector3(12.0f, -0.25f, 12.0f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f)));
+            newEntity.AddComponent(new ComponentBoxCollider(0.2f, 0.2f, 0.2f, new List<string>()));
             newEntity.AddComponent(new ComponentGeometry("Geometry/cube.obj"));
             newEntity.AddComponent(new ComponentShader("Shaders/vLighting.glsl", "Shaders/fLighting.glsl"));
             newEntity.AddComponent(new ComponentTexture("Textures/Metal.png"));
@@ -544,7 +556,6 @@ namespace OpenGL_Game.Scenes
                     player.GetTransform().Translation -= player.GetTransform().Right * player.GetVelocity().Velocity * dt;
                     //Moves camera left to stay in line with player position
                     mainCamera.MoveCamera(player.GetTransform().Translation);
-
                 }
 
                 if (player.GetCollidedWith().Count > 0)
